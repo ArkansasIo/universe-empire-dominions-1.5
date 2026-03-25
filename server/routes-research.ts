@@ -4,14 +4,7 @@
  */
 
 import { Request, Response } from "express";
-import {
-  techTreeManager,
-  getAllTechnologies,
-  getTechsByBranch,
-  getTechById,
-  TECH_PROGRESSION,
-  type TechBranch,
-} from "../../shared/config";
+
 import { storage } from "./storage";
 
 const isAuthenticated = (req: Request, res: Response, next: any) => {
@@ -23,11 +16,11 @@ const isAuthenticated = (req: Request, res: Response, next: any) => {
 
 const getUserId = (req: Request): string => req.session.userId || "";
 
-const getAvailableTechsByLevel = (playerLevel: number) =>
-  getAllTechnologies().filter(tech => tech.minimumLevel <= playerLevel);
+// const getAvailableTechsByLevel = (playerLevel: number) =>
+//   getAllTechnologies().filter(tech => tech.minimumLevel <= playerLevel);
 
-const getTechsByRarityLocal = (rarity: string) =>
-  getAllTechnologies().filter(tech => tech.rarity === rarity);
+// const getTechsByRarityLocal = (rarity: string) =>
+//   getAllTechnologies().filter(tech => tech.rarity === rarity);
 
 /**
  * Register all research & technology routes

@@ -7,7 +7,7 @@ import {
   getMegastructureTierFromLevel,
   type MegastructureCost,
 } from "../../shared/config/megastructuresConfig";
-import type { MegaStructure } from "../../shared/schema";
+// import type { MegaStructure } from "../../shared/schema";
 import { storage } from "../storage";
 
 type ResourcePool = {

@@ -1,5 +1,5 @@
 import path from "path";
-import path from "path";
+
 import { fileURLToPath } from "url";
 // Fix for __filename/__dirname in ESM
 const __filename = fileURLToPath(import.meta.url);
@@ -329,9 +329,10 @@ import { seedOgameCatalogIfNeeded } from "./services/ogameCatalogService";
   });
 
   // Optionally start the interactive console menu
-  if (process.env.ENABLE_CONSOLE_MENU === "1" || process.env.NODE_ENV === "development") {
-    ConsoleMenu.start(app, httpServer);
-  }
+  // if (process.env.ENABLE_CONSOLE_MENU === "1" || process.env.NODE_ENV === "development") {
+  //   const consoleMenu = new ConsoleMenu();
+  //   await consoleMenu.start();
+  // }
 
   // Periodically print server status
   const liveSnapshotInterval = setInterval(() => {

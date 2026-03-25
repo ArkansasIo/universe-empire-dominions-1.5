@@ -5,13 +5,7 @@ import { desc, eq, inArray, or } from "drizzle-orm";
 import { simulateBattle, calculateVictoryResources } from "./combatEngine";
 import { isAuthenticated as authenticateRequest } from "./basicAuth";
 import type { Request, Response } from "express";
-import {
-  BATTLE_SYSTEM_PROFILES,
-  COMBAT_EFFECT_LIBRARY,
-  buildProgressionSnapshot,
-  getTierForLevel,
-  type BattleMode,
-} from "../../shared/config";
+
 
 function toUnitCountMap(units: Record<string, any>): Record<string, number> {
   return Object.entries(units || {}).reduce((acc, [unitType, value]) => {

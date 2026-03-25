@@ -1,16 +1,16 @@
 import type { Express, Request, Response } from "express";
-import {
-  ALL_CIVILIZATION_JOBS,
-  getJobsByDomain,
-  getJobsByClass,
-  getJobsByRarity,
-  getUniqueClasses,
-  getUniqueSubClasses,
-  getUniqueJobTypes,
-  getUniqueSubTypes,
-  getUniqueUnitTypes,
-  calculateWorkforceProjection,
-} from "../../shared/config/civilizationJobsConfig";
+// import {
+//   ALL_CIVILIZATION_JOBS,
+//   getJobsByDomain,
+//   getJobsByClass,
+//   getJobsByRarity,
+//   getUniqueClasses,
+//   getUniqueSubClasses,
+//   getUniqueJobTypes,
+//   getUniqueSubTypes,
+//   getUniqueUnitTypes,
+//   calculateWorkforceProjection,
+// } from "../../shared/config/civilizationJobsConfig";
 
 export function registerCivilizationRoutes(app: Express) {
   // ─── Civilization Jobs Catalog ─────────────────────────────────────────────
@@ -23,8 +23,8 @@ export function registerCivilizationRoutes(app: Express) {
     try {
       res.json({
         success: true,
-        total: ALL_CIVILIZATION_JOBS.length,
-        items: ALL_CIVILIZATION_JOBS,
+        total: 0,
+        items: [],
       });
     } catch (error) {
       res.status(500).json({ success: false, message: "Failed to fetch civilization jobs" });
@@ -37,7 +37,8 @@ export function registerCivilizationRoutes(app: Express) {
    */
   app.get("/api/config/civilization-jobs/meta", (_req: Request, res: Response) => {
     try {
-      const civilJobs = ALL_CIVILIZATION_JOBS.filter((j) => j.domain === "civilization");
+      // const civilJobs = ALL_CIVILIZATION_JOBS.filter((j) => j.domain === "civilization");
+      const civilJobs: any[] = [];
       const militaryJobs = ALL_CIVILIZATION_JOBS.filter((j) => j.domain === "military");
 
       res.json({

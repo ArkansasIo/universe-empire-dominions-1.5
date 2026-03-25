@@ -8,12 +8,7 @@ import type { Express } from 'express';
 import { ArmySystemService } from './services/armySystemService';
 import { isAuthenticated } from './basicAuth';
 import { getAllArmySubsystems, getAvailableArmyUnits } from '../shared/config/armySubsystemsConfig';
-import {
-  BATTLE_SYSTEM_PROFILES,
-  COMBAT_EFFECT_LIBRARY,
-  buildProgressionSnapshot,
-  getTierForLevel,
-} from '../../shared/config';
+
 
 function boundedLevel(raw: unknown, fallback = 1) {
   const parsed = Number(raw);

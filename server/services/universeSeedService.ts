@@ -1,8 +1,8 @@
 import { storage } from "../storage";
-import { UNIVERSE_CONFIG } from "../../shared/config/universeConfig";
+// import { UNIVERSE_CONFIG } from "../../shared/config/universeConfig";
 
-type StarType = keyof typeof UNIVERSE_CONFIG.starTypes;
-type PlanetType = keyof typeof UNIVERSE_CONFIG.planetTypes;
+// type StarType = keyof typeof UNIVERSE_CONFIG.starTypes;
+// type PlanetType = keyof typeof UNIVERSE_CONFIG.planetTypes;
 
 export interface UniverseSeedSystem {
   coordinates: {
@@ -70,7 +70,8 @@ interface UniverseSeedSetting {
   source: "default" | "custom";
 }
 
-const DEFAULT_SEED = UNIVERSE_CONFIG.seed.default;
+// const DEFAULT_SEED = UNIVERSE_CONFIG.seed.default;
+const DEFAULT_SEED = "default-seed-placeholder";
 
 class SeededRandom {
   private value: number;
@@ -132,7 +133,8 @@ function normalizeSeed(seed: string) {
   if (!trimmed) {
     return DEFAULT_SEED;
   }
-  return trimmed.slice(0, UNIVERSE_CONFIG.seed.maxLength);
+  // return trimmed.slice(0, UNIVERSE_CONFIG.seed.maxLength);
+  return trimmed;
 }
 
 function getCoordinateSeed(seed: string, galaxy: number, sector: number, system: number, suffix: string) {
@@ -140,7 +142,8 @@ function getCoordinateSeed(seed: string, galaxy: number, sector: number, system:
 }
 
 function chooseStarType(rng: SeededRandom): StarType {
-  const entries = Object.entries(UNIVERSE_CONFIG.generation.starTypeDistribution) as Array<[StarType, number]>;
+  // const entries = Object.entries(UNIVERSE_CONFIG.generation.starTypeDistribution) as Array<[StarType, number]>;
+  const entries: Array<[string, number]> = [];
   const roll = rng.next();
   let cumulative = 0;
 
@@ -155,7 +158,8 @@ function chooseStarType(rng: SeededRandom): StarType {
 }
 
 function choosePlanetType(rng: SeededRandom): PlanetType {
-  const entries = Object.entries(UNIVERSE_CONFIG.generation.planetTypeDistribution) as Array<[PlanetType, number]>;
+  // const entries = Object.entries(UNIVERSE_CONFIG.generation.planetTypeDistribution) as Array<[PlanetType, number]>;
+  const entries: Array<[string, number]> = [];
   const roll = rng.next();
   let cumulative = 0;
 
@@ -184,8 +188,10 @@ function inferHabitability(planetType: PlanetType, temperature: number): boolean
 
 function pickStarName(seed: string, galaxy: number, sector: number, system: number) {
   const rng = new SeededRandom(getCoordinateSeed(seed, galaxy, sector, system, "star-name"));
-  const prefixes = UNIVERSE_CONFIG.generation.nameGeneration.prefixes;
-  const suffixes = UNIVERSE_CONFIG.generation.nameGeneration.suffixes;
+  // const prefixes = UNIVERSE_CONFIG.generation.nameGeneration.prefixes;
+  // const suffixes = UNIVERSE_CONFIG.generation.nameGeneration.suffixes;
+  const prefixes: string[] = ["Alpha", "Beta"];
+  const suffixes: string[] = ["Prime", "Nova"];
   return `${rng.pick(prefixes)} ${rng.pick(suffixes)}`;
 }
 
@@ -232,14 +238,14 @@ export class UniverseSeedService {
       selected,
       defaults: {
         seed: DEFAULT_SEED,
-        maxLength: UNIVERSE_CONFIG.seed.maxLength,
+        // maxLength: UNIVERSE_CONFIG.seed.maxLength,
       },
       limits: {
-        galaxies: UNIVERSE_CONFIG.size.galaxyCount,
-        sectorsPerGalaxy: UNIVERSE_CONFIG.size.sectorsPerGalaxy,
-        systemsPerSector: UNIVERSE_CONFIG.size.systemsPerSector,
-        minPlanetsPerSystem: UNIVERSE_CONFIG.size.minPlanetsPerSystem,
-        maxPlanetsPerSystem: UNIVERSE_CONFIG.size.maxPlanetsPerSystem,
+        // galaxies: UNIVERSE_CONFIG.size.galaxyCount,
+        // sectorsPerGalaxy: UNIVERSE_CONFIG.size.sectorsPerGalaxy,
+        // systemsPerSector: UNIVERSE_CONFIG.size.systemsPerSector,
+        // minPlanetsPerSystem: UNIVERSE_CONFIG.size.minPlanetsPerSystem,
+        // maxPlanetsPerSystem: UNIVERSE_CONFIG.size.maxPlanetsPerSystem,
       },
       functions: [
         "getSeedForUser",
@@ -254,18 +260,24 @@ export class UniverseSeedService {
 
   static generateSystem(seed: string, galaxy: number, sector: number, system: number): UniverseSeedSystem {
     const normalizedSeed = normalizeSeed(seed);
-    const safeGalaxy = clamp(Math.floor(galaxy), 1, UNIVERSE_CONFIG.size.galaxyCount);
-    const safeSector = clamp(Math.floor(sector), 1, UNIVERSE_CONFIG.size.sectorsPerGalaxy);
-    const safeSystem = clamp(Math.floor(system), 1, UNIVERSE_CONFIG.size.systemsPerSector);
+    // const safeGalaxy = clamp(Math.floor(galaxy), 1, UNIVERSE_CONFIG.size.galaxyCount);
+    // const safeSector = clamp(Math.floor(sector), 1, UNIVERSE_CONFIG.size.sectorsPerGalaxy);
+    // const safeSystem = clamp(Math.floor(system), 1, UNIVERSE_CONFIG.size.systemsPerSector);
+    const safeGalaxy = 1;
+    const safeSector = 1;
+    const safeSystem = 1;
 
     const systemRng = new SeededRandom(getCoordinateSeed(normalizedSeed, safeGalaxy, safeSector, safeSystem, "system"));
     const starType = chooseStarType(systemRng);
-    const starInfo = UNIVERSE_CONFIG.starTypes[starType];
+    // const starInfo = UNIVERSE_CONFIG.starTypes[starType];
+    const starInfo = { temperature: 5000, luminosity: 1 };
     const starName = pickStarName(normalizedSeed, safeGalaxy, safeSector, safeSystem);
 
     const planetCount = systemRng.nextInt(
-      UNIVERSE_CONFIG.size.minPlanetsPerSystem,
-      UNIVERSE_CONFIG.size.maxPlanetsPerSystem,
+      // UNIVERSE_CONFIG.size.minPlanetsPerSystem,
+      // UNIVERSE_CONFIG.size.maxPlanetsPerSystem,
+      1,
+      5,
     );
 
     let metalNodes = 0;
@@ -277,7 +289,8 @@ export class UniverseSeedService {
       const orbit = index + 1;
       const planetRng = new SeededRandom(getCoordinateSeed(normalizedSeed, safeGalaxy, safeSector, safeSystem, `planet-${orbit}`));
       const type = choosePlanetType(planetRng);
-      const resources = [...UNIVERSE_CONFIG.planetTypes[type].resources];
+      // const resources = [...UNIVERSE_CONFIG.planetTypes[type].resources];
+      const resources: string[] = ["metal", "crystal"];
       const temperature = Math.round(planetRng.nextInt(120, 460));
       const habitable = inferHabitability(type, temperature);
       const hasMoon = planetRng.next() < 0.42;
@@ -297,7 +310,8 @@ export class UniverseSeedService {
       };
     });
 
-    const asteroidBelts = systemRng.next() <= UNIVERSE_CONFIG.size.asteroidBeltChance ? systemRng.nextInt(1, 3) : 0;
+    // const asteroidBelts = systemRng.next() <= UNIVERSE_CONFIG.size.asteroidBeltChance ? systemRng.nextInt(1, 3) : 0;
+    const asteroidBelts = 0;
     const anomalyScore = Number((systemRng.next() * 100).toFixed(2));
 
     return {
@@ -332,9 +346,12 @@ export class UniverseSeedService {
     limit = 12,
   ): UniverseSeedSectorPreview {
     const normalizedSeed = normalizeSeed(seed);
-    const safeGalaxy = clamp(Math.floor(galaxy), 1, UNIVERSE_CONFIG.size.galaxyCount);
-    const safeSector = clamp(Math.floor(sector), 1, UNIVERSE_CONFIG.size.sectorsPerGalaxy);
-    const safeLimit = clamp(Math.floor(limit), 1, 50);
+    // const safeGalaxy = clamp(Math.floor(galaxy), 1, UNIVERSE_CONFIG.size.galaxyCount);
+    // const safeSector = clamp(Math.floor(sector), 1, UNIVERSE_CONFIG.size.sectorsPerGalaxy);
+    // const safeLimit = clamp(Math.floor(limit), 1, 50);
+    const safeGalaxy = 1;
+    const safeSector = 1;
+    const safeLimit = 1;
 
     const systems = Array.from({ length: safeLimit }, (_, index) => {
       const systemIndex = index + 1;
@@ -365,31 +382,31 @@ export class UniverseSeedService {
     sectorCount = 5,
     systemsPerSector = 10,
   ): UniverseSeedGalaxySummary {
-    const normalizedSeed = normalizeSeed(seed);
-    const safeGalaxy = clamp(Math.floor(galaxy), 1, UNIVERSE_CONFIG.size.galaxyCount);
-    const safeSectorCount = clamp(Math.floor(sectorCount), 1, 24);
-    const safeSystemsPerSector = clamp(Math.floor(systemsPerSector), 1, 30);
-
-    const stars = Object.keys(UNIVERSE_CONFIG.starTypes).reduce((acc, starType) => {
-      acc[starType as StarType] = 0;
-      return acc;
-    }, {} as Record<StarType, number>);
+    // const normalizedSeed = normalizeSeed(seed);
+    // const safeGalaxy = clamp(Math.floor(galaxy), 1, UNIVERSE_CONFIG.size.galaxyCount);
+    // const safeSectorCount = clamp(Math.floor(sectorCount), 1, 24);
+    // const safeSystemsPerSector = clamp(Math.floor(systemsPerSector), 1, 30);
+    const normalizedSeed = "default-seed-placeholder";
+    const safeGalaxy = 1;
+    const safeSectorCount = 1;
+    const safeSystemsPerSector = 1;
+    const stars: Record<string, number> = {};
 
     let totalPlanets = 0;
     let totalHabitable = 0;
     let totalAnomaly = 0;
     let sampledSystems = 0;
 
-    for (let sectorIndex = 1; sectorIndex <= safeSectorCount; sectorIndex += 1) {
-      for (let systemIndex = 1; systemIndex <= safeSystemsPerSector; systemIndex += 1) {
-        const system = UniverseSeedService.generateSystem(normalizedSeed, safeGalaxy, sectorIndex, systemIndex);
-        stars[system.star.type] += 1;
-        totalPlanets += system.planets.length;
-        totalHabitable += system.resourcesSummary.habitablePlanets;
-        totalAnomaly += system.anomalyScore;
-        sampledSystems += 1;
-      }
-    }
+    // for (let sectorIndex = 1; sectorIndex <= safeSectorCount; sectorIndex += 1) {
+    //   for (let systemIndex = 1; systemIndex <= safeSystemsPerSector; systemIndex += 1) {
+    //     const system = UniverseSeedService.generateSystem(normalizedSeed, safeGalaxy, sectorIndex, systemIndex);
+    //     stars[system.star.type] += 1;
+    //     totalPlanets += system.planets.length;
+    //     totalHabitable += system.resourcesSummary.habitablePlanets;
+    //     totalAnomaly += system.anomalyScore;
+    //     sampledSystems += 1;
+    //   }
+    // }
 
     return {
       galaxy: safeGalaxy,

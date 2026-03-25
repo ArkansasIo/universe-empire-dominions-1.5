@@ -4,7 +4,7 @@
  * @tag #market #resources #automation
  */
 
-import type { AutoBuyRule, AutoBuySession, AutoBuyStatistics, SellerProfile, ResourceMarketAnalysis } from '../../shared/config/autoBuyResourcesConfig';
+// import type { AutoBuyRule, AutoBuySession, AutoBuyStatistics, SellerProfile, ResourceMarketAnalysis } from '../../shared/config/autoBuyResourcesConfig';
 
 export class AutoBuyResourcesService {
   /**

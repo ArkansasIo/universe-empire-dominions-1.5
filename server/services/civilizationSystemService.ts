@@ -17,7 +17,7 @@ import {
   getSubsystemsByType,
   calculateSubsystemBonuses,
 } from '../../shared/config/civilizationSubsystemsConfig';
-import { ALL_CIVILIZATION_JOBS } from '../../shared/config/civilizationJobsConfig';
+// import { ALL_CIVILIZATION_JOBS } from '../../shared/config/civilizationJobsConfig';
 
 /**
  * In-memory storage for player civilization states

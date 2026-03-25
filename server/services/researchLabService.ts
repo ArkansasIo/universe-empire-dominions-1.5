@@ -4,19 +4,9 @@
  * @tag #research #lab #queue #service #management
  */
 
-import { 
-  ResearchQueuedItem, 
-  ResearchLabConfig, 
-  ResearchBonus,
-  ResearchModifier,
-  LAB_TIERS,
-  RESEARCH_QUEUE_RULES,
-  RESEARCH_ACCELERATION,
-  RESEARCH_FAILURE,
-  getTechById,
-} from "../../shared/config";
 import { storage } from "../storage";
-import type { PlayerState } from "../../shared/schema";
+import { storage } from "../storage";
+// import type { PlayerState } from "../../shared/schema";
 
 /**
  * Research Lab Service - Main research queue management

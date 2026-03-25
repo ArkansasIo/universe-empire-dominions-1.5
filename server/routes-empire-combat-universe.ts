@@ -1,19 +1,6 @@
 import type { Express, Request } from "express";
-import {
-  BATTLE_SYSTEM_PROFILES,
-  COMBAT_EFFECT_LIBRARY,
-  ENTITY_LEVEL_MATRIX,
-  EVENT_BOSSES,
-  NPC_WORLD_TEMPLATES,
-  UNIVERSE_EVENT_TEMPLATES,
-  buildProgressionSnapshot,
-  getEventSystemSummary,
-  getProgressionCatalogForTrack,
-  getTierForLevel,
-  type EntityTrack,
-} from "../../shared/config";
 
-const TRACKS: EntityTrack[] = ['starship', 'mothership', 'unit', 'defense', 'commander'];
+const TRACKS: string[] = ['starship', 'mothership', 'unit', 'defense', 'commander'];
 
 function parseTrack(raw: unknown): EntityTrack {
   const normalized = String(raw || '').toLowerCase() as EntityTrack;
@@ -36,8 +23,8 @@ export function registerEmpireCombatUniverseRoutes(app: Express) {
     res.json({
       success: true,
       tracks: TRACKS,
-      summary: getEventSystemSummary(),
-      combatModes: BATTLE_SYSTEM_PROFILES,
+      // summary: getEventSystemSummary(),
+      // combatModes: BATTLE_SYSTEM_PROFILES,
       effects: COMBAT_EFFECT_LIBRARY,
     });
   });
