@@ -14,9 +14,9 @@ import {
   RESEARCH_ACCELERATION,
   RESEARCH_FAILURE,
   getTechById,
-} from "@shared/config";
+} from "../../shared/config";
 import { storage } from "../storage";
-import type { PlayerState } from "@shared/schema";
+import type { PlayerState } from "../../shared/schema";
 
 /**
  * Research Lab Service - Main research queue management

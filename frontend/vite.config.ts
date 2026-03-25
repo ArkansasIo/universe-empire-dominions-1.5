@@ -1,3 +1,4 @@
+// This file is intentionally left blank to prevent CJS/TSX from loading it. Use vite.config.mjs in the project root for Vite configuration.
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'

@@ -1,4 +1,6 @@
 import { build as esbuild } from "esbuild";
+import alias from 'esbuild-plugin-alias';
+import path from 'path';
 import { build as viteBuild } from "vite";
 import { rm, readFile } from "node:fs/promises";
 
@@ -33,6 +35,10 @@ const allowlist = [
 ];
 
 async function buildAll() {
+
+  // Precompute shared directory absolute path
+  const sharedDir = path.resolve(path.dirname(new URL(import.meta.url).pathname), '../shared');
+
   await rm("dist", { recursive: true, force: true });
 
   console.log("building client...");
@@ -52,14 +58,21 @@ async function buildAll() {
     entryPoints: ["server/index.ts"],
     platform: "node",
     bundle: true,
-    format: "cjs",
-    outfile: "dist/index.cjs",
+    format: "esm",
+    outfile: "dist/index.mjs",
+    absWorkingDir: path.resolve('.'),
     define: {
       "process.env.NODE_ENV": '"production"',
     },
     minify: true,
     external: externals,
     logLevel: "info",
+    plugins: [
+      alias({
+        '@shared/*': (importPath) =>
+          path.join(sharedDir, importPath.slice('@shared/'.length)),
+      }),
+    ],
   });
 }
 

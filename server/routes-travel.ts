@@ -25,7 +25,7 @@ import {
   type Coordinates,
   type BiomeEnvironmentType,
   type BiomeRarity,
-} from "@shared/config";
+} from "../../shared/config";
 import { storage } from "./storage";
 
 declare module "express-session" {

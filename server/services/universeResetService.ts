@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { db } from "../db";
 import { storage } from "../storage";
-import { playerStates, type InsertPlayerState, users } from "@shared/schema";
+import { playerStates, type InsertPlayerState, users } from "../../shared/schema";
 
 type UniverseResetSummary = {
   resetAt: string;

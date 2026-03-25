@@ -11,7 +11,7 @@ import {
   getProgressionCatalogForTrack,
   getTierForLevel,
   type EntityTrack,
-} from "@shared/config";
+} from "../../shared/config";
 
 const TRACKS: EntityTrack[] = ['starship', 'mothership', 'unit', 'defense', 'commander'];
 

@@ -2,4 +2,4 @@ export {
   calculateOgameMissionDistance,
   calculateOgameTravelTimeSeconds,
   parseMissionCoordinates,
-} from "@shared/ogamex/index.ts";
+} from "../../shared/ogamex/index.ts";

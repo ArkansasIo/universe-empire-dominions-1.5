@@ -11,7 +11,7 @@ import {
   buildProgressionSnapshot,
   getTierForLevel,
   type BattleMode,
-} from "@shared/config";
+} from "../../shared/config";
 
 function toUnitCountMap(units: Record<string, any>): Record<string, number> {
   return Object.entries(units || {}).reduce((acc, [unitType, value]) => {

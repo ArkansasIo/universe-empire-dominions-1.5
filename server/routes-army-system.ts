@@ -13,7 +13,7 @@ import {
   COMBAT_EFFECT_LIBRARY,
   buildProgressionSnapshot,
   getTierForLevel,
-} from '@shared/config';
+} from '../../shared/config';
 
 function boundedLevel(raw: unknown, fallback = 1) {
   const parsed = Number(raw);

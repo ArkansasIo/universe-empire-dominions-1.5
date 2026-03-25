@@ -10,7 +10,7 @@ import {
   getUniqueSubTypes,
   getUniqueUnitTypes,
   calculateWorkforceProjection,
-} from "@shared/config/civilizationJobsConfig";
+} from "../../shared/config/civilizationJobsConfig";
 
 export function registerCivilizationRoutes(app: Express) {
   // ─── Civilization Jobs Catalog ─────────────────────────────────────────────

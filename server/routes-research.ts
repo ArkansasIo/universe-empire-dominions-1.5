@@ -11,7 +11,7 @@ import {
   getTechById,
   TECH_PROGRESSION,
   type TechBranch,
-} from "@shared/config";
+} from "../../shared/config";
 import { storage } from "./storage";
 
 const isAuthenticated = (req: Request, res: Response, next: any) => {

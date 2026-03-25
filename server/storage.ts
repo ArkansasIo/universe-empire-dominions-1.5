@@ -560,7 +560,7 @@ export class DatabaseStorage implements IStorage {
     if (!state) throw new Error("Player state not found");
     
     const tierExp = (state.tierExperience || 0) + amount;
-    const tierConfig = require("@shared/config/gameConfig").TIER_CONFIG;
+    const tierConfig = require("../../shared/config/gameConfig").TIER_CONFIG;
     const currentTier = state.tier || 1;
     
     let newTier = currentTier;
@@ -585,7 +585,7 @@ export class DatabaseStorage implements IStorage {
     if (!state) throw new Error("Player state not found");
     
     const empireExp = (state.empireExperience || 0) + amount;
-    const empireConfig = require("@shared/config/gameConfig").EMPIRE_LEVEL_CONFIG;
+    const empireConfig = require("../../shared/config/gameConfig").EMPIRE_LEVEL_CONFIG;
     const currentLevel = state.empireLevel || 1;
     
     let newLevel = currentLevel;

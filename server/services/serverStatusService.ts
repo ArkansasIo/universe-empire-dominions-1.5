@@ -6,8 +6,7 @@
 import os from 'os';
 import { statfsSync } from 'fs';
 import { pool } from '../db';
-import { SystemMetricsSnapshot, HealthCheckResult, HealthStatus } from '@shared/config/statusConfig';
-import { HEALTH_CHECK_THRESHOLDS } from '@shared/config/statusConfig';
+import { SystemMetricsSnapshot, HealthCheckResult, HealthStatus, HEALTH_CHECK_THRESHOLDS } from '../../shared/config/statusConfig';
 
 interface ServiceMetrics {
   requestCount: number;

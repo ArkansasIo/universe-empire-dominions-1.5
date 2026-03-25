@@ -11,7 +11,7 @@ import {
   OGAME_CATALOG_ENTRIES,
   OGAME_CATALOG_ENTRY_MAP,
   type OgameCatalogCost,
-} from "@shared/config/ogameCatalogConfig";
+} from "../../shared/config/ogameCatalogConfig";
 
 const asNumber = (value: unknown): number =>
   typeof value === "number" && Number.isFinite(value) ? value : 0;

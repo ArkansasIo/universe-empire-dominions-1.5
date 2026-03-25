@@ -1,9 +1,14 @@
+import path from "path";
+import path from "path";
+import { fileURLToPath } from "url";
+// Fix for __filename/__dirname in ESM
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import "./loadEnv";
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
 import { serveStatic } from "./static";
 import { createServer } from "http";
-import path from "path";
 import { logger } from "./logger";
 import { ConsoleMenu } from "./consoleMenu";
 import { setupAuth } from "./basicAuth";
@@ -245,7 +250,22 @@ import { seedOgameCatalogIfNeeded } from "./services/ogameCatalogService";
   registerGuildRoutes(app);
   registerForumRoutes(app);
   registerEmpireCombatUniverseRoutes(app);
-  const viewerRoot = path.resolve(import.meta.dirname, "..", "threejs_galaxy_viewer_project");
+  // Robust validation for viewerRoot path
+  const viewerBase = __dirname;
+  const segment1 = typeof viewerBase === 'string' && viewerBase ? viewerBase : '';
+  const segment2 = '..';
+  const segment3 = 'threejs_galaxy_viewer_project';
+  if (!segment1 || !segment2 || !segment3) {
+    console.error('One or more path segments are invalid:', { segment1, segment2, segment3 });
+    throw new Error('Invalid path segment for viewerRoot');
+  }
+  const viewerRoot = path.resolve(segment1, segment2, segment3);
+  if (!viewerRoot || typeof viewerRoot !== 'string') {
+    console.error('viewerRoot path is invalid:', viewerRoot, 'segments:', { segment1, segment2, segment3 });
+    throw new Error('viewerRoot path is invalid');
+  } else {
+    console.log('viewerRoot resolved to:', viewerRoot);
+  }
   app.get("/api/viewer/status", (_req, res) => {
     res.json({
       ok: true,
@@ -294,175 +314,45 @@ import { seedOgameCatalogIfNeeded } from "./services/ogameCatalogService";
   // Other ports are firewalled. Default to 5000 if not specified.
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
-  const port = parseInt(process.env.PORT || "5001", 10);
-  
-  // Color codes for console output
-  const colors = {
-    reset: '\x1b[0m',
-    bright: '\x1b[1m',
-    dim: '\x1b[2m',
-    red: '\x1b[31m',
-    green: '\x1b[32m',
-    yellow: '\x1b[33m',
-    blue: '\x1b[34m',
-    cyan: '\x1b[36m',
-  };
-
-  // Status indicators
-  const statusOn = `${colors.green}*${colors.reset}`;
-  const statusOff = `${colors.red}*${colors.reset}`;
-  const statusWarning = `${colors.yellow}*${colors.reset}`;
-  
-  const listenOptions: {
-    port: number;
-    host: string;
-    reusePort?: boolean;
-  } = {
-    port,
-    host: "0.0.0.0",
-  };
-
-  // `reusePort` is not supported on Windows sockets.
-  if (process.platform !== "win32") {
-    listenOptions.reusePort = true;
+  // Allow port override via command line argument, environment variable, or default to 5001
+  let port = 5001;
+  // Check for --port argument
+  const portArgIndex = process.argv.findIndex(arg => arg === '--port');
+  if (portArgIndex !== -1 && process.argv[portArgIndex + 1]) {
+    port = parseInt(process.argv[portArgIndex + 1], 10);
+  } else if (process.env.PORT) {
+    port = parseInt(process.env.PORT, 10);
   }
 
-  httpServer.listen(
-    listenOptions,
-    () => {
-      log(`serving on port ${port}`);
-      
-      // Startup animation sequence
-      const spinnerFrames = ["-", "\\", "|", "/"];
-      let frameIndex = 0;
-      
-      const displayStartupScreen = () => {
-        console.clear();
-        console.log("\n" + colors.bright + colors.blue + "================================================" + colors.reset);
-        console.log(colors.bright + colors.blue + " SERVER STARTUP INITIALIZATION " + colors.reset);
-        console.log(colors.bright + colors.blue + "================================================" + colors.reset + "\n");
-        
-        frameIndex = (frameIndex + 1) % spinnerFrames.length;
-        const spinner = spinnerFrames[frameIndex];
-        
-        console.log(colors.bright + "  Initializing Server Components:" + colors.reset);
-        console.log(`    ${spinner} Loading Express.js framework...`);
-        console.log(`    [ok] ${colors.green}Database connection pool initialized${colors.reset}`);
-        console.log(`    [ok] ${colors.green}Session manager configured${colors.reset}`);
-        console.log(`    [ok] ${colors.green}Authentication middleware loaded${colors.reset}`);
-        console.log(`    [ok] ${colors.green}API routes registered${colors.reset}`);
-        console.log(`    [ok] ${colors.green}Error handlers configured${colors.reset}`);
-        console.log(`    ${spinner} Starting HTTP server...`);
-      };
-      
-      // Show startup animation for a few frames
-      const animationDuration = 1200;
-      const animationInterval = setInterval(displayStartupScreen, 150);
-      
-      setTimeout(() => {
-        clearInterval(animationInterval);
-        void (async () => {
-          const metrics = await statusService.getSystemMetrics().catch(() => null);
-          const healthColor =
-            metrics?.healthCheck.status === "healthy"
-              ? colors.green
-              : metrics?.healthCheck.status === "degraded"
-                ? colors.yellow
-                : colors.red;
+  httpServer.listen(port, () => {
+    log(`Server listening on port ${port} [${runtimeNodeEnv}]`, "startup", "success");
+  });
 
-          console.clear();
-          
-          // Display main startup banner
-          console.log("\n" + colors.bright + colors.green + "================================================" + colors.reset);
-          console.log(colors.bright + colors.green + " SERVER INITIALIZED SUCCESSFULLY " + colors.reset);
-          console.log(colors.bright + colors.green + "================================================" + colors.reset + "\n");
-          
-          // Brief setup summary
-          console.log(colors.bright + colors.blue + "Setup Complete:" + colors.reset);
-          console.log(`  ${statusOn} All services initialized`);
-          console.log(`  ${statusOn} Server ready to accept connections`);
-          console.log(`  ${statusOn} Database connection verified\n`);
-          
-          // Display server status dashboard
-          console.log(colors.bright + colors.cyan + "================================================" + colors.reset);
-          console.log(colors.bright + colors.cyan + " SERVER STATUS DASHBOARD " + colors.reset);
-          console.log(colors.bright + colors.cyan + "================================================" + colors.reset + "\n");
-          
-          console.log(colors.bright + "Main Server Info:" + colors.reset);
-          console.log(`  ${statusOn} Server Status: ${colors.green}RUNNING${colors.reset}`);
-          console.log(`  ${statusOn} Port: ${colors.cyan}${port}${colors.reset}`);
-          console.log(`  ${statusOn} Environment: ${colors.cyan}${runtimeNodeEnv}${colors.reset}`);
-          console.log(`  ${statusOn} Health Score: ${healthColor}${metrics?.healthCheck.overallScore ?? 100}${colors.reset}`);
-          console.log(`  ${statusOn} Uptime: ${colors.cyan}${formatConsoleUptime((metrics?.cpu.uptime ?? 0) * 1000)}${colors.reset}`);
-          
-          console.log("\n" + colors.bright + "Database:" + colors.reset);
-          console.log(`  ${statusOn} PostgreSQL: ${colors.green}CONNECTED${colors.reset}`);
-          console.log(`  ${statusOn} Host: ${colors.cyan}${process.env.PGHOST || 'localhost'}${colors.reset}`);
-          console.log(`  ${statusOn} Connections: ${colors.cyan}${metrics?.database.connections ?? 0}/${metrics?.database.maxConnections ?? 0}${colors.reset}`);
-          console.log(`  ${statusOn} Active Queries: ${colors.cyan}${metrics?.database.activeQueries ?? 0}${colors.reset}`);
-          console.log(`  ${statusOn} Cache Hit Rate: ${colors.cyan}${Math.round(metrics?.database.cacheHitRate ?? 0)}%${colors.reset}`);
-          
-          console.log("\n" + colors.bright + "Performance:" + colors.reset);
-          console.log(`  ${statusOn} Total Requests: ${colors.cyan}${metrics?.requests.totalRequests ?? 0}${colors.reset}`);
-          console.log(`  ${statusOn} Request Rate: ${colors.cyan}${(metrics?.requests.requestsPerSecond ?? 0).toFixed(2)}/sec${colors.reset}`);
-          console.log(`  ${statusOn} Avg Response: ${colors.cyan}${Math.round(metrics?.requests.averageResponseTime ?? 0)}ms${colors.reset}`);
-          console.log(`  ${statusOn} P95 / P99: ${colors.cyan}${Math.round(metrics?.requests.p95ResponseTime ?? 0)}ms / ${Math.round(metrics?.requests.p99ResponseTime ?? 0)}ms${colors.reset}`);
+  // Optionally start the interactive console menu
+  if (process.env.ENABLE_CONSOLE_MENU === "1" || process.env.NODE_ENV === "development") {
+    ConsoleMenu.start(app, httpServer);
+  }
 
-          console.log("\n" + colors.bright + "Resources:" + colors.reset);
-          console.log(`  ${statusOn} CPU Usage: ${colors.cyan}${Math.round(metrics?.cpu.usage ?? 0)}%${colors.reset}`);
-          console.log(`  ${statusOn} Memory: ${colors.cyan}${formatConsoleMemory(metrics?.memory.used ?? 0)} / ${formatConsoleMemory(metrics?.memory.total ?? 0)}${colors.reset}`);
-          console.log(`  ${statusOn} Disk Usage: ${colors.cyan}${Math.round(metrics?.disk.usage ?? 0)}%${colors.reset}`);
-          
-          console.log("\n" + colors.bright + "Services:" + colors.reset);
-          console.log(`  ${statusOn} Express Server: ${colors.green}ACTIVE${colors.reset}`);
-          console.log(`  ${statusOn} Session Manager: ${colors.green}ACTIVE${colors.reset}`);
-          console.log(`  ${statusOn} Authentication: ${colors.green}READY${colors.reset}`);
-          
-          console.log("\n" + colors.bright + "Access:" + colors.reset);
-          console.log(`  ${colors.cyan}->${colors.reset} API Endpoint: ${colors.bright}http://localhost:${port}/api${colors.reset}`);
-          console.log(`  ${colors.cyan}->${colors.reset} Web Interface: ${colors.bright}http://localhost:${port}${colors.reset}`);
-          console.log(`  ${colors.cyan}->${colors.reset} Health Check: ${colors.bright}http://localhost:${port}/api/status/health${colors.reset}`);
-          
-          console.log("\n" + colors.bright + "Health Checks:" + colors.reset);
-          if (metrics) {
-            Object.entries(metrics.healthCheck.checks).forEach(([key, check]) => {
-              const icon = check.status === "ok" ? statusOn : check.status === "warning" ? statusWarning : statusOff;
-              const color = check.status === "ok" ? colors.green : check.status === "warning" ? colors.yellow : colors.red;
-              console.log(`  ${icon} ${key}: ${color}${check.status.toUpperCase()}${colors.reset} (${Math.round(check.value)}/${Math.round(check.threshold)})`);
-            });
-          }
-          
-          console.log("\n" + colors.bright + colors.yellow + "Status Indicators:" + colors.reset);
-          console.log(`  ${statusOn} Online / Active`);
-          console.log(`  ${statusOff} Offline / Inactive`);
-          console.log(`  ${statusWarning} Warning / Resetting\n`);
-        })();
-      }, animationDuration);
+  // Periodically print server status
+  const liveSnapshotInterval = setInterval(() => {
+    (async () => {
+      const metrics = await statusService.getMetrics();
+      const healthLabel = metrics.health.ok ? "OK" : "FAIL";
+      const healthColor = metrics.health.ok ? "\x1b[32m" : "\x1b[31m";
+      const colors = { reset: "\x1b[0m", dim: "\x1b[2m" };
+      logger.info(
+        "SERVER",
+        `${colors.dim}[status]${colors.reset} uptime=${formatConsoleUptime(metrics.cpu.uptime * 1000)} ` +
+        `health=${healthColor}${healthLabel}${colors.reset} ` +
+        `req=${metrics.requests.totalRequests} ` +
+        `rps=${metrics.requests.requestsPerSecond.toFixed(2)} ` +
+        `avg=${Math.round(metrics.requests.averageResponseTime)}ms ` +
+        `cpu=${Math.round(metrics.cpu.usage)}% ` +
+        `mem=${formatConsoleMemory(metrics.memory.used)}/${formatConsoleMemory(metrics.memory.total)} ` +
+        `db=${metrics.database.connections}/${metrics.database.maxConnections}`
+      );
+    })();
+  }, 60000);
+  liveSnapshotInterval.unref?.();
 
-      const liveSnapshotInterval = setInterval(() => {
-        void (async () => {
-          const metrics = await statusService.getSystemMetrics().catch(() => null);
-          if (!metrics) return;
-          const healthLabel = metrics.healthCheck.status.toUpperCase();
-          const healthColor =
-            metrics.healthCheck.status === "healthy"
-              ? colors.green
-              : metrics.healthCheck.status === "degraded"
-                ? colors.yellow
-                : colors.red;
-          console.log(
-            `${colors.dim}[status]${colors.reset} uptime=${formatConsoleUptime(metrics.cpu.uptime * 1000)} ` +
-            `health=${healthColor}${healthLabel}${colors.reset} ` +
-            `req=${metrics.requests.totalRequests} ` +
-            `rps=${metrics.requests.requestsPerSecond.toFixed(2)} ` +
-            `avg=${Math.round(metrics.requests.averageResponseTime)}ms ` +
-            `cpu=${Math.round(metrics.cpu.usage)}% ` +
-            `mem=${formatConsoleMemory(metrics.memory.used)}/${formatConsoleMemory(metrics.memory.total)} ` +
-            `db=${metrics.database.connections}/${metrics.database.maxConnections}`
-          );
-        })();
-      }, 60000);
-      liveSnapshotInterval.unref?.();
-    },
-  );
 })();
