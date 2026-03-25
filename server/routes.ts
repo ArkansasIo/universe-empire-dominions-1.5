@@ -2,23 +2,8 @@ import { Router, Request, Response } from "express";
 import { eq, desc, and, or, like, asc, sql } from "drizzle-orm";
 import { createHash } from "crypto";
 import { db } from "./db";
-import {
-  users,
-  playerStates,
-  missions,
-  messages,
-  alliances,
-  allianceMembers,
-  marketOrders,
-  auctionListings,
-  auctionBids,
-  playerCurrency,
-  currencyTransactions,
-  bankAccounts,
-  bankTransactions,
-  empireValues,
-  playerItems,
-// } from "../shared/schema";
+import schema from "./db/schema";
+const { users, playerItems, auctionListings, auctionBids, currencyTransactions, bankTransactions } = schema;
 import { storage } from "./storage";
 
 // Augment express-session types

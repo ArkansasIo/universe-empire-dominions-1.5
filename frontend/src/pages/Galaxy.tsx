@@ -1,10 +1,12 @@
+
 import GalaxyLayout from "@/components/layout/GalaxyLayout";
 
-export default function Galaxy() {
-  return (
-    <GalaxyLayout />
-  );
-}
+// Helper function to build a system (move above default export)
+function buildSystem(universe: string, galaxy: number, sector: number, system: number) {
+  // ...existing code for buildSystem...
+  const baseKey = `${universe}:${galaxy}:${sector}:${system}`;
+  const sysHash = fnv1a(baseKey);
+  const starType = pickStarType(seededAt(sysHash, 0));
   const starName = generateName(fnv1a(`${baseKey}:star-name`));
   const systemName = generateName(fnv1a(`${baseKey}:sys-name`));
 
@@ -60,6 +62,11 @@ export default function Galaxy() {
 
   return { systemName, star: { type: starType, name: starName }, positions };
 }
+
+
+import { useState } from "react";
+
+
 
 export default function Galaxy() {
   const [universe, setUniverse] = useState("uni1");
@@ -140,7 +147,7 @@ export default function Galaxy() {
         </div>
 
         {/* System Info / Star Display */}
-        <div className="bg-white border border-slate-200 p-4 rounded-lg flex items-center gap-4 shadow-sm">
+        <div className="bg-white border border-slate-200 p-4 rounded-lg flex flex-col gap-4 shadow-sm">
           <div
             className={cn(
               "w-12 h-12 rounded-full flex-shrink-0",
@@ -148,38 +155,23 @@ export default function Galaxy() {
             )}
             style={{ background: `radial-gradient(circle at 35% 35%, white, ${STAR_INFO[generatedSystem.star.type]?.color ?? "#ffe4a0"})` }}
           />
-          <div>
-            <div className="font-bold text-slate-900 font-orbitron text-lg">
-              {generatedSystem.systemName} System
-            </div>
-            <div className="text-sm text-muted-foreground font-rajdhani">
-              Star: <span className="font-semibold text-slate-700">{generatedSystem.star.name}</span>
-              {" · "}Type <span className="font-semibold text-slate-700">{generatedSystem.star.type}</span>
-              {" · "}
-              <span className="italic">{STAR_INFO[generatedSystem.star.type]?.label ?? "Unknown"}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Galaxy Table */}
-        <div className="bg-white border border-slate-200 rounded-lg overflow-hidden shadow-sm">
-           <Table>
-             <TableHeader>
-               <TableRow className="bg-slate-50 border-slate-200 hover:bg-slate-50">
-                 <TableHead className="text-center w-[60px] text-slate-700">Pos</TableHead>
-                 <TableHead className="w-[80px] text-slate-700">Visual</TableHead>
-                 <TableHead className="text-slate-700">Name</TableHead>
-                 <TableHead className="text-slate-700">Class</TableHead>
-                 <TableHead className="text-slate-700">Moon/Debris</TableHead>
-                 <TableHead className="text-slate-700">Player / Status</TableHead>
-                 <TableHead className="text-slate-700">Alliance</TableHead>
-                 <TableHead className="text-right text-slate-700">Actions</TableHead>
-               </TableRow>
-             </TableHeader>
-             <TableBody>
-               {Array.from({ length: 15 }).map((_, i) => {
-                 const pos = i + 1;
-                 const data = getSystemData(pos);
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="text-center text-slate-700">#</TableHead>
+                <TableHead className="text-slate-700">Visual</TableHead>
+                <TableHead className="text-slate-700">Name</TableHead>
+                <TableHead className="text-slate-700">Class</TableHead>
+                <TableHead className="text-slate-700">Moon/Debris</TableHead>
+                <TableHead className="text-slate-700">Player / Status</TableHead>
+                <TableHead className="text-slate-700">Alliance</TableHead>
+                <TableHead className="text-right text-slate-700">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 15 }).map((_, i) => {
+                const pos = i + 1;
+                const data = getSystemData(pos);
                  const isMe = data.owner === "Commander";
                  
                  return (

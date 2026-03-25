@@ -5,7 +5,10 @@ export interface User {
   username: string;
   email: string;
   credits: number;
-  // ...other user fields
+  fullName?: string;
+  facebookId?: string;
+  lastLogin?: string;
+  // Add more user fields as needed
 }
 
 export interface Ship {
@@ -20,7 +23,13 @@ export interface Ship {
   torpedoes: number;
   fighters: number;
   energy: number;
-  // ...other ship fields
+  sectorId?: string;
+  planetId?: string;
+  turns?: number;
+  turnsUsed?: number;
+  score?: number;
+  credits?: number;
+  // Add more ship fields as needed
 }
 
 export interface Planet {
@@ -28,6 +37,17 @@ export interface Planet {
   name: string;
   ownerId: string;
   sectorId: string;
+  colonists?: number;
+  organics?: number;
+  ore?: number;
+  goods?: number;
+  energy?: number;
+  fighters?: number;
+  torpedoes?: number;
+  base?: boolean;
+  defeated?: boolean;
+  // Add more planet fields as needed
+}
   colonists: number;
   energy: number;
   ore: number;

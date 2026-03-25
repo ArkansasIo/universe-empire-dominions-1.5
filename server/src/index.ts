@@ -8,6 +8,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// Xenoberage API routes
+import xenoberageRoutes from '../../backend/xenoberage/xenoberage.routes';
+app.use('/api/xenoberage', xenoberageRoutes);
+
 app.get('/', (req, res) => {
   res.send('XenobeRage API running');
 });

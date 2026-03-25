@@ -157,13 +157,18 @@ function RouterContent() {
   }
 
   if (!isLoggedIn) {
+    const IndexLayout = require("@/components/layout/IndexLayout").default;
     return (
       <Switch>
         <Route path="/admin/login" component={AdminLogin} />
         <Route path="/about" component={About} />
         <Route path="/terms" component={Terms} />
         <Route path="/privacy" component={Privacy} />
-        <Route component={Auth} />
+        <Route>
+          <IndexLayout>
+            <Auth />
+          </IndexLayout>
+        </Route>
       </Switch>
     );
   }

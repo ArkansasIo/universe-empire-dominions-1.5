@@ -1,3 +1,4 @@
+
 import { type Express } from "express";
 import { createServer as createViteServer, createLogger } from "vite";
 import { type Server } from "http";
@@ -5,6 +6,7 @@ import viteConfig from "../vite.config.mjs";
 import fs from "fs";
 import path from "path";
 import { nanoid } from "nanoid";
+import { fileURLToPath } from "url";
 
 const viteLogger = createLogger();
 
@@ -31,14 +33,12 @@ export async function setupVite(server: Server, app: Express) {
 
   app.use(vite.middlewares);
 
-  app.use("/(.*)", async (req, res, next) => {
+  app.use("/", async (req, res, next) => {
     const url = req.originalUrl;
 
     try {
-      // Fix: import.meta.dirname is not valid, use ESM workaround
-      // ESM: get __dirname from fileURLToPath
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = path.dirname(__filename);
+
+      // Use __dirname directly for CommonJS compatibility
       const clientTemplate = path.resolve(
         __dirname,
         "..",

@@ -162,7 +162,8 @@ export default function Government() {
                                  <TrendingDown className="w-3 h-3" /> {gov.penalties[0]}
                               </div>
                            </div>
-                         ))}
+                        </div>
+                     ))}
                   </CardContent>
                </Card>
             </div>

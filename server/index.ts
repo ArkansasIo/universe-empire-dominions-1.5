@@ -335,11 +335,12 @@ import { seedOgameCatalogIfNeeded } from "./services/ogameCatalogService";
   // }
 
   // Periodically print server status
+
   const liveSnapshotInterval = setInterval(() => {
     (async () => {
-      const metrics = await statusService.getMetrics();
-      const healthLabel = metrics.health.ok ? "OK" : "FAIL";
-      const healthColor = metrics.health.ok ? "\x1b[32m" : "\x1b[31m";
+      const metrics = await statusService.getSystemMetrics();
+      const healthLabel = metrics.healthCheck.status === "healthy" ? "OK" : "FAIL";
+      const healthColor = metrics.healthCheck.status === "healthy" ? "\x1b[32m" : "\x1b[31m";
       const colors = { reset: "\x1b[0m", dim: "\x1b[2m" };
       logger.info(
         "SERVER",
